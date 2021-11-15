@@ -43,7 +43,6 @@ with open('/Users/DianaG/Documents/Learning/Python/AD_out.csv', 'w') as f:
 
 # **** Part 2/2 ****
 
-
 df = pd.read_csv('/Users/DianaG/Documents/Learning/Python/AD_out.csv')
 print(df.info() , '\n\n')
 
@@ -89,9 +88,8 @@ df['PasswordAge'] = PasswordAge
 
 #print (df)
 
-AvgPassAge = (df.loc[df['UserAccountControl'].isin([66048, 2080, 512])])['PasswordAge'].mean()
-print ('Avg Pass age of enabled users:' , AvgPassAge, '\n')
-
+AvgPassAge = df.loc[(df['UserAccountControl'].isin([66048, 2080, 512]) & (df['GroupsMembership'].str.contains('CN=Domain Admins')))]['PasswordAge'].mean()
+print ('Avg Pass age of enabled domain admin users:' , AvgPassAge, '\n')
 
 ### Amount of enabled inactive domain users. Inactive users: users that didn't log on in the past month + users that never loged on
 LastLogonDate = []
@@ -120,5 +118,3 @@ print(df1.info() , '\n\n')
 
 InactiveEnabledUsers = df1.loc[df['UserAccountControl'].isin([66048, 2080, 512])] 
 print('Count of Inactive Enabled domain users :', EnabledUsers['CN'].count(), '\n') 
-
- 
