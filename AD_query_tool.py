@@ -128,7 +128,7 @@ def main():
     print('\nAmount of enabled domain admins:', enabled_domain_admins_amount())
     print('\nAvarege password age of enabled domain admins:',enabled_domain_admins_avg_password_age(), 'days')
     print('\nAmount of enabled domain admins using card authentication:', enabled_admins_card_req())
-    print('\nAmount of enabled domain admins with non delegated accounts:', enabled_admins_account_not_delegated())
+    print('\nAmount of enabled domain admins with non delegative accounts:', enabled_admins_account_not_delegated())
     print('\nAmount of enabled accounts without password:', enabled_accounts_without_password())
     print('\nAmount of enabled domain users :', enabled_users_amount())
     print('\nAmount of enabled inactive domain users:', enabled_inactive_users(), '\n* Inactive users are users that did not logon for more than one month')
