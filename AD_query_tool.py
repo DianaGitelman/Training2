@@ -11,26 +11,28 @@ LDAP_LOGIN = 'Administrator'
 LDAP_PASS = 'Nhwk2iISxJuOZQa43IDch0J8z0hqB5jY'
 SEARCH_OBJECT = '(&(objectClass=user)(objectCategory=person))'
 SEARCH_ATTR = ['userAccountControl', 'lastLogon', 'PwdLastSet', 'memberOf']
-CSV_PATH = os.path.join('.', 'AD_output.csv')  # path and file name for AD query results dataset  
+CSV_PATH = os.path.join('AD_output.csv')  # path and file name for AD query results dataset  
 
-def active_directory_conn(LDAP_SERVER, LDAP_LOGIN, LDAP_PASS):
+def active_directory_conn():
     conn = ldap.initialize(LDAP_SERVER)
     conn.simple_bind_s(LDAP_LOGIN, LDAP_PASS) 
     return(conn)
 
-def search_active_directory(BASE_DN, search_object, search_attr, connection):
-    results = connection.search_s(BASE_DN, ldap.SCOPE_SUBTREE, search_object , search_attr)
+def search_active_directory(): 
+    connection = active_directory_conn()   
+    results = connection.search_s(BASE_DN, ldap.SCOPE_SUBTREE, SEARCH_OBJECT , SEARCH_ATTR)
     connection.unbind()
     return(results[:-4]) # cutting out irrelevant data rows 
 
-def results_to_csv(path, active_directory_output):
-    with open(path, 'w') as csv_file:  
+def results_to_csv():
+    active_directory_output = search_active_directory()
+    with open(CSV_PATH, 'w') as csv_file:  
         writer = csv.writer(csv_file)
         header = ['CN', 'GroupsMembership', 'UserAccountControl', 'LastLogon', 'LastPasswordSet'] 
         writer.writerow(header)
         for i in active_directory_output:
             cn = i[0]
-            member_of = i[0],i[1].get('memberOf')
+            member_of = str(i[1].get('memberOf'))
             user_account_control = int(i[1].get('userAccountControl')[0])
             last_logon = int(i[1].get('lastLogon')[0])
             pwd_last_set = int(i[1].get('pwdLastSet')[0])
@@ -122,9 +124,9 @@ def enabled_admins_account_not_delegated():
     return(admins_non_delegated_amount)
 
 def main():
-    connection = active_directory_conn(LDAP_SERVER, LDAP_LOGIN, LDAP_PASS)   
-    active_directory_output = search_active_directory(BASE_DN, SEARCH_OBJECT, SEARCH_ATTR, connection)
-    results_to_csv(CSV_PATH, active_directory_output) 
+    connection = active_directory_conn()   
+    active_directory_output = search_active_directory()    
+    results_to_csv() 
     print('\nAmount of enabled domain admins:', enabled_domain_admins_amount())
     print('\nAvarege password age of enabled domain admins:',enabled_domain_admins_avg_password_age(), 'days')
     print('\nAmount of enabled domain admins using card authentication:', enabled_admins_card_req())
